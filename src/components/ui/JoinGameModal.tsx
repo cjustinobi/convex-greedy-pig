@@ -1,11 +1,9 @@
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
-import { selectJoinModal } from '@/features/modal/modalSlice'
-import { useMutation, useQuery } from 'convex/react'
+import { useMutation } from 'convex/react'
 import { useParams } from 'next/navigation'
 import { FC, FormEvent, useState } from 'react'
 import toast from 'react-hot-toast'
-import { useDispatch, useSelector } from 'react-redux'
 import Button from '../shared/Button'
 
 interface JoinGameModalProps {
@@ -13,7 +11,7 @@ interface JoinGameModalProps {
 }
 
 const JoinGameModal: FC<JoinGameModalProps> = ({ closeJoinModal }) => {
-  const dispatch = useDispatch()
+
   const { slug } = useParams<{ slug: Id<'games'> }>()
 
   // const game = useQuery(api.games.getGameById, { id: slug })

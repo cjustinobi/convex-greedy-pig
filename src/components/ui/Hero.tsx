@@ -3,13 +3,12 @@ import Link from 'next/link'
 import { useDispatch } from 'react-redux'
 import GreedyHero from '@/assets/img/greedypig-hero.png'
 import Button from '../shared/Button'
-import toast from 'react-hot-toast'
 
 const Hero = () => {
   
   const dispatch = useDispatch()
+  
   const modalHandler = () => {
-    
     dispatch({ type: 'modal/toggleGameModal' })
   }
 

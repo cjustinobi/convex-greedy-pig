@@ -4,12 +4,8 @@ import { useQuery } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { GameStatus } from '@/interfaces'
 import { capitalize } from '@/lib/utils'
-import toast from 'react-hot-toast'
-
-
 
 const Games = () => {
-
 
   const router = useRouter();
 

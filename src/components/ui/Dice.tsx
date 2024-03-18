@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Die1 from "@/assets/img/dice_1.png";
 import Die2 from "@/assets/img/dice_2.png";
 import Die3 from "@/assets/img/dice_3.png";
@@ -16,14 +16,8 @@ import { GameStatus } from "@/interfaces";
 
 const die = [Die1, Die2, Die3, Die4, Die5, Die6];
 
-interface ApparatusProps {
-  // setIsRolling: (value: boolean) => void
-  // isRolling: boolean
-  // value: number
-}
+const Dice = () => {
 
-const Dice: FC<ApparatusProps> = () => {
-  
   const { slug } = useParams<{ slug: Id<"games"> }>();
   const game = useQuery(api.games.getGameById, { id: slug });
   const updateGameStatus = useMutation(api.games.updateGameStatus);
@@ -32,7 +26,7 @@ const Dice: FC<ApparatusProps> = () => {
   const [currentDice, setCurrentDice] = useState(0);
   const [isRolling, setIsRolling] = useState<boolean>(false);
 
-  const diceRollSound = useAudio("/sounds/diceRoll.mp3");
+  const diceRollSound = useAudio("/sounds/diceRoll.mp3")
 
   const saveGameOutcome = async () => {
     if (game?.status === "Ended") {
@@ -69,13 +63,6 @@ const Dice: FC<ApparatusProps> = () => {
         response: true,
       },
     });
-
-    // setValue(result);
-    // if (players.length >= 2) {
-
-    // } else {
-    //   toast.error('Not enough players to play')
-    // }
   };
 
 
@@ -93,31 +80,29 @@ const Dice: FC<ApparatusProps> = () => {
         } else {
           setCurrentDice(game?.rollOutcome - 1);
           clearInterval(interval);
-          // saveGameOutcome(diceValue + 1)
           setIsRolling(false);
-          //  setChangeBackground(false)
         }
       }, 100);
     }
   }, [game?.rollOutcome, isRolling])
 
   return (
-    <>
-      <button
-        className={`hover:scale-105 active:scale-100 duration-300 md:w-auto w-[200px]`}
-        onClick={saveGameOutcome}
-        disabled={isRolling}
-      >
-        {die.map((dice, index) => (
-          <Image
-            key={index}
-            src={dice}
-            alt="Dice"
-            className={`${currentDice === index ? "" : "hidden"}`}
-          />
-        ))}
-      </button>
-    </>
+
+    <button
+      className={`hover:scale-105 active:scale-100 duration-300 md:w-auto w-[200px]`}
+      onClick={saveGameOutcome}
+      disabled={isRolling}
+    >
+      {die.map((dice, index) => (
+        <Image
+          key={index}
+          src={dice}
+          alt="Dice"
+          className={`${currentDice === index ? "" : "hidden"}`}
+        />
+      ))}
+    </button>
+
   );
 };
 

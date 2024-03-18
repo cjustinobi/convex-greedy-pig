@@ -16,7 +16,7 @@ const CreateGameModal = () => {
     selectGameModal(state.modal)
   )
 
-  const [creator, setCreator] = useState<string>('')
+  const [creator] = useState<string>('')
   const [gameName, setGameName] = useState<string>('')
   const [startTime, setStartTime] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)

@@ -16,7 +16,6 @@ export const getGameById = query({
       return await db
       .query("games")
       .filter(q => q.eq(q.field('_id'), id))
-      // .filter((q) => q.eq(q.field("_id"), id))
       .first()
   }
 })
@@ -91,8 +90,7 @@ export const updateParticipant = mutation({
   handler: async ({db}, { data }) => {
     const foundGame = await findGame(db, data.id)
  
-    // const res= foundGame?.participants.find(p => p.address === data.playerAddress)
-    // console.log('res ', res)
+  
     if (!foundGame) {
       throw new Error('Game not found');
     }
@@ -115,23 +113,31 @@ export const updateParticipant = mutation({
 
         // Update the totalScore of the player and make the next player the active player after 3 seconds
         // setTimeout(async () => {
+        const currentPlayer = participants[currentPlayerIndex];
 
-          const updatedParticipants = foundGame?.participants.map((p) => {
-            if (p.address === data.playerAddress && p.playerInfo) {
-              // Update totalScore and turnScore of the current player
-              p.playerInfo.totalScore += p.playerInfo.turnScore;
-              p.playerInfo.turnScore = 0;
-            }
-            return p;
-          });
+        const updatedTotalScore = currentPlayer.playerInfo?.totalScore ?? 0;
 
-          // Make the next player the active player
-          
-          if (currentPlayerIndex && updatedParticipants) {
-            const nextPlayerIndex = (currentPlayerIndex + 1) % updatedParticipants.length;
-            const nextPlayerAddress = updatedParticipants[nextPlayerIndex].address;
-            await db.patch(data.id, { participants: updatedParticipants, activePlayer: nextPlayerAddress });
-          }
+        const updatedParticipants = [...participants];
+
+
+        if (currentPlayer.playerInfo) {
+          updatedParticipants[currentPlayerIndex] = {
+            ...currentPlayer,
+            playerInfo: {
+              ...currentPlayer.playerInfo,
+              totalScore: updatedTotalScore,
+              turnScore: 0
+            },
+          };
+  
+            // Make the next player the active player
+            
+            // if (currentPlayerIndex && updatedParticipants) {
+              const nextPlayerIndex = (currentPlayerIndex + 1) % updatedParticipants.length;
+              const nextPlayerAddress = updatedParticipants[nextPlayerIndex].address;
+              await db.patch(data.id, { participants: updatedParticipants, activePlayer: nextPlayerAddress });
+            // }
+        }
 
         // }, 3000);
       } else {
@@ -156,15 +162,24 @@ export const updateParticipant = mutation({
 
           const updatedTotalScore = (currentPlayer.playerInfo?.totalScore ?? 0) + currentPlayerTurnScore;
 
-        if (updatedTotalScore >= winningScore) {
-          await db.patch(data.id, {
-            status: GameStatus.Ended, // Assuming vUpdateGameStatus defines winning state
-            winner: currentPlayer.address,
-            /* Update other relevant fields as needed */
-          });
-        } else {
-          await db.patch(data.id, { participants: updatedParticipants });
-        }
+
+          if (updatedTotalScore >= winningScore) {
+            await db.patch(data.id, {
+              status: GameStatus.Ended,
+              winner: currentPlayer.address,
+              participants: updatedParticipants.map((p) => ({
+                ...p,
+                playerInfo: {
+                  ...p.playerInfo,
+                  turn: p.playerInfo?.turn ?? 0, // Ensure turn is defined
+                  turnScore: 0,
+                  totalScore: p.address === currentPlayer.address ? updatedTotalScore : p.playerInfo?.totalScore ?? 0
+                }
+              }))
+            });
+          } else {
+            await db.patch(data.id, { participants: updatedParticipants });
+          }
 
         // }, 3000);
       }

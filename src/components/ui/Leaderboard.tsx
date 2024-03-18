@@ -1,27 +1,24 @@
-import { useSelector } from 'react-redux'
-import { useMutation, useQuery } from 'convex/react'
+
+import { useQuery } from 'convex/react'
 import { api } from '@/convex/_generated/api'
-import {
-  selectParticipants,
-  Participant,
-  // selectActivePlayer,
-} from '@/features/leaderboard/leaderboardSlice'
 import { EmptyPage } from '../shared/EmptyPage'
-import { useEffect, useState } from 'react'
-import { GameStatus } from '@/interfaces'
-import { selectSelectedGame } from '@/features/games/gamesSlice'
+import { useEffect } from 'react'
 import { Id } from '@/convex/_generated/dataModel'
 import { useParams } from 'next/navigation'
-
-// import { useState } from 'react'
+import useAudio from '@/hooks/useAudio'
 
 const LeaderBoard = () => {
 
+  const loseSound = useAudio("/sounds/loseSound.mp3");
   const { slug } = useParams<{ slug: Id<'games'> }>()
-
   const game = useQuery(api.games.getGameById, { id: slug })
 
-  const [status, setStatus] = useState<GameStatus>(GameStatus.New)
+  useEffect(() => {
+    if (game && game.rollOutcome === 0) {
+      loseSound?.play();
+    }
+  }, [game]);
+
 
   return (
     <div className="relative flex flex-col w-full min-w-0 break-words border-0 border-transparent border-solid shadow-soft-xl rounded-2xl bg-clip-border mb-4 draggable">
