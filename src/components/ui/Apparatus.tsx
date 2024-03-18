@@ -41,25 +41,6 @@ const Apparatus: FC<RouletteProps> = () => {
     
   }
 
-  const playGame = async (response: string) => {
-
-    if (game?.status === 'Ended') {
-      return toast.error('Game has ended')
-    }
-
-    
-
-    if (game?.activePlayer !== user) {
-      return toast.error('Not your turn')
-    }
-
-
-    // if (players.length >= 2) {
-
-    // } else {
-    //   toast.error('Not enough players to play')
-    // }
-  }
 
   const closeJoinModal = () => {
 

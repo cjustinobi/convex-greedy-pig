@@ -1,7 +1,13 @@
 import { GameStatus } from '../interfaces';
 import { mutation, query } from './_generated/server'
 import { v } from 'convex/values'
-import { vAddParticipant, vCreateGame, vUpdateParticipant, vGameId } from './validators';
+import { 
+  vAddParticipant, 
+  vCreateGame, 
+  vUpdateParticipant, 
+  vGameId,
+  vUpdateGameStatus
+} from './validators';
 import { findGame } from './utils'
 
 export const getGameById = query({
@@ -37,6 +43,13 @@ export const create = mutation({
   args: {game: vCreateGame},
   handler: async ({ db }, { game }) => {
     return await db.insert('games', game)
+  }, 
+})
+
+export const updateGameStatus = mutation({
+  args: {data: vUpdateGameStatus},
+  handler: async ({ db }, { data }) => {
+    return await db.patch(data.id, { status: data.status})
   }, 
 })
 
@@ -91,16 +104,17 @@ export const updateParticipant = mutation({
       throw new Error('Player not found');
     }
 
+    const diceRollOutcome = Math.floor(Math.random() * 6) + 1
+
     if (data.response) {
 
-      const diceRollOutcome = Math.floor(Math.random() * 6) + 1
 
       if (diceRollOutcome === 1) {
         // Set rolloutcome to 0
         await db.patch(data.id, { rollOutcome: 0 });
 
         // Update the totalScore of the player and make the next player the active player after 3 seconds
-        setTimeout(async () => {
+        // setTimeout(async () => {
 
           const updatedParticipants = foundGame?.participants.map((p) => {
             if (p.address === data.playerAddress && p.playerInfo) {
@@ -119,13 +133,13 @@ export const updateParticipant = mutation({
             await db.patch(data.id, { participants: updatedParticipants, activePlayer: nextPlayerAddress });
           }
 
-        }, 3000);
+        // }, 3000);
       } else {
         // Set rolloutcome to diceRollOutcome
         await db.patch(data.id, { rollOutcome: diceRollOutcome });
 
         // After 3 seconds, add the rolloutcome to the turnScore
-        setTimeout(async () => {
+        // setTimeout(async () => {
           const updatedParticipants = foundGame?.participants.map((p) => {
             if (p.address === data.playerAddress && p.playerInfo) {
               // Add the rolloutcome to the turnScore of the current player
@@ -135,7 +149,7 @@ export const updateParticipant = mutation({
           });
 
           await db.patch(data.id, { participants: updatedParticipants });
-        }, 3000);
+        // }, 3000);
       }
     } else {
       // If data response is false
@@ -162,6 +176,6 @@ export const updateParticipant = mutation({
         await db.patch(data.id, { participants: updatedParticipants, activePlayer: nextPlayerAddress });
       }
     }
-
+    return diceRollOutcome
   },
 })

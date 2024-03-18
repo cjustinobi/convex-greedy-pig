@@ -32,6 +32,11 @@ export const vCreateGame = v.object({
     winner: v.string()
   })
 
+  export const vUpdateGameStatus = v.object({
+    id: v.id('games'),
+    status: v.union(v.literal(GameStatus.New), v.literal(GameStatus.Cancelled), v.literal(GameStatus.Ended), v.literal(GameStatus.InProgress))
+  })
+
 export const vAddParticipant = v.object({
   id: v.id('games'),
   playerAddress: v.string()
