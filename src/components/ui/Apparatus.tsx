@@ -12,7 +12,7 @@ import {
 } from '@/features/games/gamesSlice'
 import Dice from '@/components/ui/Dice'
 import useAudio from '@/hooks/useAudio'
-import { useQuery } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import JoinGameModal from './JoinGameModal'
@@ -25,6 +25,7 @@ interface RouletteProps {
 
 const Apparatus: FC<RouletteProps> = () => {
 
+  const updateParticipant = useMutation(api.games.updateParticipant);
   const dispatch = useDispatch()
   const searchParams = useSearchParams()
   const loseSound = useAudio('/sounds/loseSound.mp3')
@@ -37,8 +38,21 @@ const Apparatus: FC<RouletteProps> = () => {
   const [value, setValue] = useState(0)
   const [playerAddress, setPlayerAddress] = useState<string>('')
 
-  const handleResponse = (response: string) => {
-    
+  const handleResponse = async (response: string) => {
+
+     const username = localStorage.getItem("username");
+     if (game?.activePlayer !== username) {
+       return toast.error("Not your turn");
+     }
+    await updateParticipant({
+      data: {
+        id: game?._id,
+        playerAddress: username,
+        key: "turn",
+        value: 0,
+        response: false,
+      },
+    });
   }
 
 
@@ -56,28 +70,6 @@ const Apparatus: FC<RouletteProps> = () => {
     }
   }, [searchParams])
 
-  // useEffect(() => {
-  //   rollups?.inputContract.on(
-  //     'InputAdded',
-  //     (dappAddress, inboxInputIndex, sender, input) => {
-  //       if (
-  //         parseInputEvent(input).method === 'playGame' &&
-  //         game.rollOutcome !== 1
-  //       ) {
-  //         dispatch({ type: 'leaderboard/freezLeaderboard', payload: false })
-
-  //         setTimeout(() => {
-  //           setValue(game.rollOutcome)
-  //           setIsRolling(true)
-  //         }, 5000)
-  //       } else {
-  //         dispatch({ type: 'leaderboard/freezLeaderboard', payload: false })
-  //         loseSound?.play()
-  //         setValue(game.rollOutcome)
-  //       }
-  //     }
-  //   )
-  // }, [game, rollups, loseSound, dispatch])
 
   return (<div>
     {game ? <div className="w-[300px]">

@@ -23,6 +23,7 @@ interface ApparatusProps {
 }
 
 const Dice: FC<ApparatusProps> = () => {
+  
   const { slug } = useParams<{ slug: Id<"games"> }>();
   const game = useQuery(api.games.getGameById, { id: slug });
   const updateGameStatus = useMutation(api.games.updateGameStatus);

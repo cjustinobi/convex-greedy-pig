@@ -126,7 +126,7 @@ export const updateParticipant = mutation({
           });
 
           // Make the next player the active player
-          // const currentPlayerIndex = updatedParticipants?.findIndex((p) => p.address === data.playerAddress);
+          
           if (currentPlayerIndex && updatedParticipants) {
             const nextPlayerIndex = (currentPlayerIndex + 1) % updatedParticipants.length;
             const nextPlayerAddress = updatedParticipants[nextPlayerIndex].address;
@@ -138,7 +138,6 @@ export const updateParticipant = mutation({
         // Set rolloutcome to diceRollOutcome
         await db.patch(data.id, { rollOutcome: diceRollOutcome });
 
-        // After 3 seconds, add the rolloutcome to the turnScore
         // setTimeout(async () => {
           const updatedParticipants = foundGame?.participants.map((p) => {
             if (p.address === data.playerAddress && p.playerInfo) {
@@ -148,7 +147,25 @@ export const updateParticipant = mutation({
             return p;
           });
 
+          // check if the player has reached the winning score
+          const winningScore = foundGame.gameSettings.winningScore;
+
+          const currentPlayer = participants[currentPlayerIndex];
+
+          const currentPlayerTurnScore = currentPlayer.playerInfo?.turnScore ?? 0;
+
+          const updatedTotalScore = (currentPlayer.playerInfo?.totalScore ?? 0) + currentPlayerTurnScore;
+
+        if (updatedTotalScore >= winningScore) {
+          await db.patch(data.id, {
+            status: GameStatus.Ended, // Assuming vUpdateGameStatus defines winning state
+            winner: currentPlayer.address,
+            /* Update other relevant fields as needed */
+          });
+        } else {
           await db.patch(data.id, { participants: updatedParticipants });
+        }
+
         // }, 3000);
       }
     } else {
@@ -165,6 +182,7 @@ export const updateParticipant = mutation({
           playerInfo: {
             ...currentPlayer.playerInfo,
             totalScore: updatedTotalScore,
+            turnScore: 0
           },
         };
   
