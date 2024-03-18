@@ -45,13 +45,6 @@ const Header = () => {
           >
             My Games
           </Link>
-          <Link
-            onClick={modalHandler}
-            href="#"
-            className="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700"
-          >
-            Create Game
-          </Link>
         </nav>
         <div className="-ml-8 hidden flex-col gap-2.5 sm:flex-row sm:justify-center lg:flex lg:justify-start">
           <div className="flex items-center gap-8">
