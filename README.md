@@ -21,4 +21,4 @@ The game ends either when the agreed-upon number of turns is reached or when a p
 
 Greedy Pig stands as an innovative fusion of entertainment and technology, poised to captivate event attendees while exemplifying the potential of Convex Database for real-time update.
 
-[Demo](https://github.com/cjustinobi/greedy-pig)
+[Demo](https://convex-greedy-pig.vercel.app)
