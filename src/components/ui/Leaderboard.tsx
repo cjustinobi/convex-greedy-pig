@@ -16,23 +16,22 @@ const LeaderBoard = () => {
   const [delayedGame, setDelayedGame] = useState<any>(null);
 
   useEffect(() => {
-    if (game && game.rollOutcome === 0) {
 
-      const timeoutId = setTimeout(() => {
-        setDelayedGame(game);
-      }, 3000);
-      return () => clearTimeout(timeoutId)
-    }
-  }, [game, loseSound]);
+    const timeoutId = setTimeout(() => {
+      setDelayedGame(game);
+    }, 3000);
+    return () => clearTimeout(timeoutId)
+
+  }, [game]);
 
   // Use delayed game instead of immediate game change
   const currentGame = delayedGame || game;
 
-  // useEffect(() => {
-  //   if (game && game.rollOutcome === 0) {
-  //     loseSound?.play();
-  //   }
-  // }, [game]);
+  useEffect(() => {
+    if (game && game.rollOutcome === 0) {
+      loseSound?.play();
+    }
+  }, [game]);
 
 
   return (
