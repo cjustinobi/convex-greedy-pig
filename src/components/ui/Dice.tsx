@@ -27,7 +27,7 @@ const Dice = () => {
   const [isRolling, setIsRolling] = useState<boolean>(false);
 
   const diceRollSound = useAudio("/sounds/diceRoll.mp3")
-  const celebrationSound = useAudio("/sounds/celebrationSound.mp3")
+  const celebrationSound = useAudio("/sounds/celebration.mp3")
 
   const saveGameOutcome = async () => {
     if (game?.status === "Ended") {
@@ -68,8 +68,8 @@ const Dice = () => {
 
   useEffect(() => {
     if (game?.status === "Ended") {
-      toast.success(`Game Over ${game.winner} won!`);
       celebrationSound?.play();
+      toast.success(`Game Over ${game.winner} won!`);
     }
   }, [game])
 

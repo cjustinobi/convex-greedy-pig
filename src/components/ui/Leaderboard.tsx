@@ -2,7 +2,7 @@
 import { useQuery } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { EmptyPage } from '../shared/EmptyPage'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Id } from '@/convex/_generated/dataModel'
 import { useParams } from 'next/navigation'
 import useAudio from '@/hooks/useAudio'
@@ -13,11 +13,26 @@ const LeaderBoard = () => {
   const { slug } = useParams<{ slug: Id<'games'> }>()
   const game = useQuery(api.games.getGameById, { id: slug })
 
+  const [delayedGame, setDelayedGame] = useState<any>(null);
+
   useEffect(() => {
     if (game && game.rollOutcome === 0) {
-      loseSound?.play();
+
+      const timeoutId = setTimeout(() => {
+        setDelayedGame(game);
+      }, 3000);
+      return () => clearTimeout(timeoutId)
     }
-  }, [game]);
+  }, [game, loseSound]);
+
+  // Use delayed game instead of immediate game change
+  const currentGame = delayedGame || game;
+
+  // useEffect(() => {
+  //   if (game && game.rollOutcome === 0) {
+  //     loseSound?.play();
+  //   }
+  // }, [game]);
 
 
   return (
@@ -26,7 +41,7 @@ const LeaderBoard = () => {
         <h1 className="font-bold text-2xl mb-10">Leaderboard</h1>
       </div>
 
-      {game && game.participants?.length ? (
+      {currentGame && currentGame.participants?.length ? (
         <div className="flex-auto px-0 pt-0 pb-2">
           <div className="p-0 overflow-x-auto">
             <table className="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
@@ -47,8 +62,8 @@ const LeaderBoard = () => {
                 </tr>
               </thead>
               <tbody>
-                {game.participants.length &&
-                  game.participants.map((player: any, i: number) => (
+                {currentGame.participants.length &&
+                  currentGame.participants.map((player: any, i: number) => (
                     <tr key={i}>
                       {/* <tr key={i} className={player.username === activePlayer ? 'bg-gray-100' : ''}> */}
                       <td className="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
