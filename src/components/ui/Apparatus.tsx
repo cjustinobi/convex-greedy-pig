@@ -9,6 +9,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import JoinGameModal from "./JoinGameModal";
+import useAudio from "@/hooks/useAudio";
 
 const Apparatus = () => {
   const updateParticipant = useMutation(api.games.updateParticipant);
@@ -16,10 +17,12 @@ const Apparatus = () => {
   const searchParams = useSearchParams();
   const { slug } = useParams<{ slug: Id<"games"> }>();
   const game = useQuery(api.games.getGameById, { id: slug });
+  const passSound = useAudio("/sounds/passSound.mp3");
 
   const [joinGameForm, setJoinGameForm] = useState<boolean>(false)
 
   const handleResponse = async () => {
+    passSound?.play();
     const username = localStorage.getItem("username");
     if (game?.activePlayer !== username) {
       return toast.error("Not your turn");
