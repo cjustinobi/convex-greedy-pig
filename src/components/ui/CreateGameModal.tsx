@@ -70,7 +70,7 @@ const CreateGameModal = () => {
 
   const reset = () => {
     setGameName('')
-    setStartTime('')
+    // setStartTime('')
     dispatch({ type: 'modal/toggleGameModal' })
   }
 
