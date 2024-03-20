@@ -18,6 +18,7 @@ const CreateGameModal = () => {
 
   const [creator] = useState<string>('')
   const [gameName, setGameName] = useState<string>('')
+  const [winningScore, setWinningScore] = useState<number>(20)
   const [startTime, setStartTime] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   
@@ -52,7 +53,7 @@ const CreateGameModal = () => {
         participants: [],
         gameSettings: {
           turnTimeLimit: 0,
-          winningScore: 20,
+          winningScore,
           mode: 'score',
           apparatus: 'dice',
           bet: false,
@@ -86,7 +87,7 @@ const CreateGameModal = () => {
   return (
     <div
       className={`fixed ${
-        createGameForm ? '' : 'hidden'
+        createGameForm ? "" : "hidden"
       } inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="my-modal`}
     >
       <form
@@ -123,14 +124,30 @@ const CreateGameModal = () => {
             Title
           </label>
           <input
-            onChange={e => setGameName(e.target.value)}
+            onChange={(e) => setGameName(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="name"
             type="text"
             placeholder="Ohio Meet & Greet Game"
           />
         </div>
-    
+
+        <div className="my-4">
+          <label
+            className="block text-gray-400 text-sm font-bold mb-2"
+            htmlFor="winningScore"
+          >
+            Winnning Score
+          </label>
+          <input
+            onChange={(e) => setWinningScore(parseInt(e.target.value))}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="winningScore"
+            type="number"
+            placeholder="Set winning score"
+          />
+        </div>
+
         <div className="my-4">
           <label
             className="block text-gray-400 text-sm font-bold mb-2"
@@ -139,20 +156,19 @@ const CreateGameModal = () => {
             Start Time
           </label>
           <input
-            onChange={e => setStartTime(e.target.value)}
+            onChange={(e) => setStartTime(e.target.value)}
             type="datetime-local"
             className="appearance-none bg-gray-100 border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
           />
-      
         </div>
-      
+
         <div className="mb-4">
           <span className="block">Bet Game?</span>
           <label className="inline-flex items-center">
             <input
               type="radio"
               className="form-radio"
-              checked
+              disabled
               name="accountType"
               value="yes"
             />
@@ -162,7 +178,7 @@ const CreateGameModal = () => {
             <input
               type="radio"
               className="form-radio"
-              disabled
+              checked
               name="accountType"
               value="no"
             />
@@ -219,16 +235,13 @@ const CreateGameModal = () => {
         </div>
 
         <div className="flex items-center justify-between">
-          <Button
-            className="w-[200px]"
-            type="submit"
-          >
-            {loading ? 'Creating ...' : 'Create Game'}
+          <Button className="w-[200px]" type="submit">
+            {loading ? "Creating ..." : "Create Game"}
           </Button>
         </div>
       </form>
     </div>
-  )
+  );
 }
 
 export default CreateGameModal
