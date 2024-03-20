@@ -192,7 +192,7 @@ const CreateGameModal = () => {
             <input
               type="radio"
               className="form-radio"
-              disabled
+              checked
               name="apparatus"
               value="die"
             />
@@ -202,7 +202,7 @@ const CreateGameModal = () => {
             <input
               type="radio"
               className="form-radio"
-              checked
+              disabled
               name="apparatus"
               value="roulette"
             />
