@@ -33,30 +33,9 @@ export default defineSchema({
       v.literal(GameStatus.Ended),
       v.literal(GameStatus.Cancelled)
     ),
-    startTime: v.string(),
+    // startTime: v.string(),
     rollOutcome: v.number(),
     winner: v.string()
   })
   .index('by_status', ['status'])
 })
-
-
-// [
-//   {
-//     activePlayer: "",
-//     creator: "",
-//     gameName: "",
-//     gameSettings: {
-//       apparatus: "",
-//       bet: false,
-//       limitNumberOfPlayer: false,
-//       maxPlayer: 0,
-//       mode: "",
-//       turnTimeLimit: 0,
-//       winningScore: 0,
-//     },
-//     participants: undefined,
-//     startTime: "",
-//     status: "",
-//   },
-// ]

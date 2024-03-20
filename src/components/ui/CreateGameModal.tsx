@@ -19,7 +19,7 @@ const CreateGameModal = () => {
   const [creator] = useState<string>('')
   const [gameName, setGameName] = useState<string>('')
   const [winningScore, setWinningScore] = useState<number>(20)
-  const [startTime, setStartTime] = useState<string>('')
+  // const [startTime, setStartTime] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   
 
@@ -61,7 +61,7 @@ const CreateGameModal = () => {
           limitNumberOfPlayer: true,
         },
         status: GameStatus.New,
-        startTime,
+        // startTime,
         rollOutcome: 0,
         winner: '',
       }})
@@ -148,7 +148,7 @@ const CreateGameModal = () => {
           />
         </div>
 
-        <div className="my-4">
+        {/* <div className="my-4">
           <label
             className="block text-gray-400 text-sm font-bold mb-2"
             htmlFor="startDate"
@@ -160,7 +160,7 @@ const CreateGameModal = () => {
             type="datetime-local"
             className="appearance-none bg-gray-100 border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
           />
-        </div>
+        </div> */}
 
         <div className="mb-4">
           <span className="block">Bet Game?</span>
@@ -216,7 +216,7 @@ const CreateGameModal = () => {
             <input
               type="radio"
               className="form-radio"
-              checked
+              disabled
               name="mode"
               value="turn"
             />
@@ -226,7 +226,7 @@ const CreateGameModal = () => {
             <input
               type="radio"
               className="form-radio"
-              disabled
+              checked
               name="mode"
               value="score"
             />
