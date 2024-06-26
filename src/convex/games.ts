@@ -1,5 +1,5 @@
 import { GameStatus } from '../interfaces';
-import { mutation, query } from './_generated/server'
+import { internalMutation, mutation, query } from './_generated/server'
 import { v } from 'convex/values'
 import { 
   vAddParticipant, 
@@ -20,6 +20,9 @@ export const getGameById = query({
   }
 })
 
+// run cron and delete game that has not been started after an hour
+
+
 export const getGamesByStatus = query({
   args: { gameStatus: v.union(
     v.literal(GameStatus.InProgress), 
@@ -32,7 +35,7 @@ return await db
     .query('games')
     .withIndex('by_status', (q) => q.eq('status', gameStatus))
     .order('desc')
-    .collect()
+    .take(3)
  
   }
   
@@ -211,4 +214,24 @@ export const updateParticipant = mutation({
     }
     return diceRollOutcome
   },
+})
+
+export const clearInactiveGames = internalMutation({
+  handler: async ({ db }) => {
+
+    const now = Date.now()
+    const twelveHoursAgo = now - 4320000
+  
+    const inactiveGames = await db
+      .query('games')
+      .withIndex('by_status', (q) => q.eq('status', GameStatus.New))
+      .collect()
+
+      for (const game of inactiveGames) {
+        if ((game._creationTime) <= twelveHoursAgo) {
+          console.log('Deleting game', game._id)
+          await db.delete(game._id)
+        }
+      }
+  }
 })
