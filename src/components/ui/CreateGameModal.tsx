@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useMutation } from 'convex/react'
 import { api } from '@/convex/_generated/api'
@@ -9,8 +9,8 @@ import { GameStatus } from '@/interfaces'
 
 const CreateGameModal = () => {
 
+  const formRef = useRef(null)
   const createGame = useMutation(api.games.create)
-
   const dispatch = useDispatch()
   const createGameForm = useSelector((state: any) =>
     selectGameModal(state.modal)
@@ -68,11 +68,19 @@ const CreateGameModal = () => {
     }
 
 
+  // const reset = () => {
+  //   setGameName('')
+  //   // setStartTime('')
+  //   dispatch({ type: 'modal/toggleGameModal' })
+  // }
   const reset = () => {
+    if (formRef.current) {
+      formRef.current?.reset()
+    }
     setGameName('')
-    // setStartTime('')
-    dispatch({ type: 'modal/toggleGameModal' })
-  }
+    setWinningScore(20)
+    dispatch({ type: "modal/toggleGameModal" })
+  };
 
   useEffect(() => {
     const init = async () => {

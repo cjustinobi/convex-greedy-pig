@@ -1,42 +1,37 @@
-import { useEffect, useState } from "react";
-import Die1 from "@/assets/img/dice_1.png";
-import Die2 from "@/assets/img/dice_2.png";
-import Die3 from "@/assets/img/dice_3.png";
-import Die4 from "@/assets/img/dice_4.png";
-import Die5 from "@/assets/img/dice_5.png";
-import Die6 from "@/assets/img/dice_6.png";
-import Image from "next/image";
-import useAudio from "@/hooks/useAudio";
-import toast from "react-hot-toast";
-import { useParams } from "next/navigation";
-import { Id } from "@/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { GameStatus } from "@/interfaces";
+import { useEffect, useState } from 'react'
+import Image from 'next/image'
+import useAudio from '@/hooks/useAudio'
+import toast from 'react-hot-toast'
+import { useParams } from 'next/navigation'
+import { Id } from '@/convex/_generated/dataModel'
+import { useMutation, useQuery } from 'convex/react'
+import { api } from '@/convex/_generated/api'
+import { GameStatus } from '@/interfaces'
+import { loadDiceImages } from '@/lib/utils'
 
-const die = [Die1, Die2, Die3, Die4, Die5, Die6];
+const die = loadDiceImages()
 
 const Dice = () => {
 
-  const { slug } = useParams<{ slug: Id<"games"> }>();
-  const game = useQuery(api.games.getGameById, { id: slug });
-  const updateGameStatus = useMutation(api.games.updateGameStatus);
-  const updateParticipant = useMutation(api.games.updateParticipant);
+  const { slug } = useParams<{ slug: Id<"games"> }>()
+  const game = useQuery(api.games.getGameById, { id: slug })
+  const updateGameStatus = useMutation(api.games.updateGameStatus)
+  const updateParticipant = useMutation(api.games.updateParticipant)
 
-  const [currentDice, setCurrentDice] = useState(0);
-  const [isRolling, setIsRolling] = useState<boolean>(false);
+  const [currentDice, setCurrentDice] = useState(0)
+  const [isRolling, setIsRolling] = useState<boolean>(false)
 
   const diceRollSound = useAudio("/sounds/diceRoll.mp3")
   const celebrationSound = useAudio("/sounds/celebration.mp3")
 
   const saveGameOutcome = async () => {
     if (game?.status === "Ended") {
-      return toast.error("Game has ended");
+      return toast.error("Game has ended")
     }
 
-    const username = localStorage.getItem("username");
+    const username = localStorage.getItem("username")
     if (game?.activePlayer !== username) {
-      return toast.error("Not your turn");
+      return toast.error("Not your turn")
     }
 
        if (game?.status !== "In Progress") {
@@ -48,12 +43,12 @@ const Dice = () => {
              }
            })
          } catch (error) {
-           console.error("Error updating game status:", error);
-           return toast.error("Failed to update game status");
+           console.error("Error updating game status:", error)
+           return toast.error("Failed to update game status")
          }
        }
 
-    const rollOutcome = Math.floor(Math.random() * 6) + 1;
+    const rollOutcome = Math.floor(Math.random() * 6) + 1
 
     await updateParticipant({
       data: {
@@ -63,34 +58,34 @@ const Dice = () => {
         value: rollOutcome,
         response: true,
       },
-    });
-  };
+    })
+  }
 
   useEffect(() => {
     if (game?.status === "Ended") {
-      celebrationSound?.play();
-      toast.success(`Game Over ${game.winner} won!`);
+      celebrationSound?.play()
+      toast.success(`Game Over ${game.winner} won!`)
     }
   }, [game])
 
 
   useEffect(() => {
     if (game?.rollOutcome) {
-      let endRoll = 0;
-      let interval: any;
-      let diceValue: number;
+      let endRoll = 0
+      let interval: any
+      let diceValue: number
       interval = setInterval(() => {
         if (endRoll < 30) {
-          diceRollSound?.play();
-          diceValue = Math.floor(Math.random() * 6);
-          setCurrentDice(diceValue);
-          endRoll++;
+          diceRollSound?.play()
+          diceValue = Math.floor(Math.random() * 6)
+          setCurrentDice(diceValue)
+          endRoll++
         } else {
-          setCurrentDice(game?.rollOutcome - 1);
-          clearInterval(interval);
-          setIsRolling(false);
+          setCurrentDice(game?.rollOutcome - 1)
+          clearInterval(interval)
+          setIsRolling(false)
         }
-      }, 100);
+      }, 100)
     }
   }, [game?.rollOutcome, isRolling])
 
@@ -111,7 +106,7 @@ const Dice = () => {
       ))}
     </button>
 
-  );
-};
+  )
+}
 
-export default Dice;
+export default Dice
