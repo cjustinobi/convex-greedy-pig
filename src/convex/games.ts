@@ -43,7 +43,25 @@ return await db
 
 export const create = mutation({
   args: {game: vCreateGame},
-  handler: async ({ db }, { game }) => {
+  handler: async ({ db, auth }, { game }) => {
+    console.log('auth ', auth)
+    const identity = await auth.getUserIdentity();
+    console.log(identity)
+    if (!identity) {
+      throw new Error("Unauthenticated call to mutation");
+    }
+
+    const user = await db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier),
+      )
+      .unique();
+    if (!user) {
+      throw new Error("Unauthenticated call to mutation");
+    }
+
+    game.creator = user._id
     return await db.insert('games', game)
   }, 
 })

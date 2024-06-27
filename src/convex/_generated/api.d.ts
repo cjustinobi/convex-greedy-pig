@@ -14,8 +14,10 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as auth from "../auth.js";
 import type * as crons from "../crons.js";
 import type * as games from "../games.js";
+import type * as users from "../users.js";
 import type * as utils from "../utils.js";
 import type * as validators from "../validators.js";
 
@@ -28,8 +30,10 @@ import type * as validators from "../validators.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  auth: typeof auth;
   crons: typeof crons;
   games: typeof games;
+  users: typeof users;
   utils: typeof utils;
   validators: typeof validators;
 }>;

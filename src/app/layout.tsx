@@ -1,6 +1,7 @@
 'use client'
 
 import { Provider } from 'react-redux'
+import { ClerkProvider } from '@clerk/nextjs'
 import { Inter } from 'next/font/google'
 import { Toaster } from 'react-hot-toast'
 import ConvexClientProvider from '@/components/providers/ConvexClientProvider'

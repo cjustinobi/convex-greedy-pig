@@ -5,7 +5,7 @@ import { GameStatus } from '../interfaces'
 export default defineSchema({
   games: defineTable({
     activePlayer: v.string(),
-    creator: v.string(),
+    creator: v.optional(v.string()),
     gameName: v.string(),
     gameSettings: v.object({
       apparatus: v.string(),
@@ -37,5 +37,11 @@ export default defineSchema({
     rollOutcome: v.number(),
     winner: v.string()
   })
-  .index('by_status', ['status'])
+  .index('by_status', ['status']),
+
+  users: defineTable({
+    name: v.string(),
+    email: v.string(),
+    tokenIdentifier: v.string()
+  }).index('by_token', ['tokenIdentifier'])
 })

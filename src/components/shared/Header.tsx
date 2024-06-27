@@ -6,6 +6,7 @@ import Socials from '@/components/ui/Socials'
 import Button from './Button'
 import { navLinks } from "@/lib/utils";
 import Drawer from '@/components/ui/Drawer'
+import { SignedIn, SignedOut, SignIn, SignInButton, UserButton } from '@clerk/nextjs'
 
 const Header = () => {
 
@@ -47,10 +48,18 @@ const Header = () => {
         </nav>
         <div className="-ml-8 hidden flex-col gap-2.5 sm:flex-row sm:justify-center lg:flex lg:justify-start">
           <div className="flex items-center gap-8">
-            <Socials />
+            {/* <Socials /> */}
             <Button onClick={modalHandler} className="w-[200px]">
               Create Game
             </Button>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+            <SignedOut>
+              <SignInButton>
+                <Button>Sign In</Button>
+              </SignInButton>
+            </SignedOut>
           </div>
         </div>
 

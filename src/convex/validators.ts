@@ -5,7 +5,7 @@ export const vGameId = v.id('games')
 
 export const vCreateGame = v.object({
     activePlayer: v.string(),
-    creator: v.string(),
+    creator: v.optional(v.id('users')),
     gameName: v.string(),
     gameSettings: v.object({
       apparatus: v.string(),

@@ -23,8 +23,8 @@ module.exports = {
     },
   },
   plugins: [
+    require('daisyui'),
     require('@tailwindcss/typography'),
-    require('tw-elements/dist/plugin.cjs'),
-    require('daisyui')
+    require('tw-elements/dist/plugin.cjs')
   ]
 }
