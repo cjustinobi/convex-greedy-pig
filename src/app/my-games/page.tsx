@@ -12,21 +12,6 @@ const MyGames = () => {
   const createdGames = useQuery(api.users.createdGames)
   const joinedGames = useQuery(api.users.joinedGames)
 
-  // if (!createdGames?.length) {
-  //   return (
-  //     <div className="md:px-custom p-custom-sm text-gray-500">
-  //       <Header />
-  //       <h1 className="divider">Created Games</h1>
-  //       <div className="text-center py-10">
-  //         <p className="mb-6">No games created yet.</p>
-  //         <div className="flex justify-center">
-  //           <Button className="btn w-[180px]">Create game</Button>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   )
-  // }
-
   return (
     <div className="md:px-custom p-custom-sm text-gray-500">
       <Header />

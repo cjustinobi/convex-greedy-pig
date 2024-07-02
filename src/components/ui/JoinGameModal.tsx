@@ -1,9 +1,11 @@
+import { FC, FormEvent, useEffect, useState } from 'react'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { useMutation } from 'convex/react'
 import { useParams } from 'next/navigation'
-import { FC, FormEvent, useState } from 'react'
 import toast from 'react-hot-toast'
+import { useConvexAuth } from 'convex/react'
+import { useUser } from '@clerk/clerk-react'
 import Button from '../shared/Button'
 
 interface JoinGameModalProps {
@@ -13,8 +15,8 @@ interface JoinGameModalProps {
 const JoinGameModal: FC<JoinGameModalProps> = ({ closeJoinModal }) => {
 
   const { slug } = useParams<{ slug: Id<'games'> }>()
-
-  // const game = useQuery(api.games.getGameById, { id: slug })
+  const { isAuthenticated } = useConvexAuth()
+  const { user } = useUser()
   const addUsername = useMutation(api.games.addParticipant)
 
   const [loading, setLoading] = useState<boolean>(false)
@@ -46,6 +48,12 @@ const JoinGameModal: FC<JoinGameModalProps> = ({ closeJoinModal }) => {
     setLoading(false)
     closeJoinModal()
   }
+
+   useEffect(() => {
+     if (isAuthenticated && user?.username) {
+       setUsername(user.username);
+     }
+   }, [isAuthenticated, user]);
 
   return (
     <div
@@ -83,6 +91,8 @@ const JoinGameModal: FC<JoinGameModalProps> = ({ closeJoinModal }) => {
         <div className="relative mb-3 mt-10" data-twe-input-wrapper-init>
           <input
             onChange={(e) => setUsername(e.target.value)}
+            disabled={isAuthenticated}
+            value={username}
             className="peer block min-h-[auto] w-full rounded border bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[twe-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-white dark:placeholder:text-neutral-300 dark:autofill:shadow-autofill dark:peer-focus:text-primary [&:not([data-twe-input-placeholder-active])]:placeholder:opacity-0"
             id="exampleFormControlInput1"
             placeholder="Enter Username"
