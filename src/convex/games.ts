@@ -1,4 +1,4 @@
-import { GameStatus } from '../interfaces';
+import { GameStatus } from '../interfaces'
 import { internalMutation, mutation, query } from './_generated/server'
 import { v } from 'convex/values'
 import { 
@@ -7,7 +7,7 @@ import {
   vUpdateParticipant, 
   vGameId,
   vUpdateGameStatus
-} from './validators';
+} from './validators'
 import { findGame } from './utils'
 
 export const getGameById = query({
@@ -31,12 +31,12 @@ export const getGamesByStatus = query({
     v.literal(GameStatus.New)
     ) },
   handler: async ({ db }, { gameStatus }) => {
-return await db
-    .query('games')
-    .withIndex('by_status', (q) => q.eq('status', gameStatus))
-    .order('desc')
-    .take(3)
- 
+    
+    return await db
+      .query('games')
+      .withIndex('by_status', (q) => q.eq('status', gameStatus))
+      .order('desc')
+      .take(3)
   }
   
 })
@@ -45,10 +45,10 @@ export const create = mutation({
   args: {game: vCreateGame},
   handler: async ({ db, auth }, { game }) => {
     console.log('auth ', auth)
-    const identity = await auth.getUserIdentity();
+    const identity = await auth.getUserIdentity()
     console.log(identity)
     if (!identity) {
-      throw new Error("Unauthenticated call to mutation");
+      throw new Error("Unauthenticated call to mutation")
     }
 
     const user = await db
@@ -56,9 +56,9 @@ export const create = mutation({
       .withIndex("by_token", (q) =>
         q.eq("tokenIdentifier", identity.tokenIdentifier),
       )
-      .unique();
+      .unique()
     if (!user) {
-      throw new Error("Unauthenticated call to mutation");
+      throw new Error("Unauthenticated call to mutation")
     }
 
     game.creator = user._id
@@ -83,7 +83,7 @@ export const addParticipant = mutation({
       throw new Error('Game does not exists')
     }
 
-    const { participants } = foundGame;
+    const { participants } = foundGame
     const playerJoined = foundGame.participants.find(p => p.address === data.playerAddress)
 
     if (playerJoined) {
@@ -99,7 +99,7 @@ export const addParticipant = mutation({
       }
     }]
 
-    const updatedActivePlayer = addedParticipants[0].address;
+    const updatedActivePlayer = addedParticipants[0].address
 
     return await db.patch(data.id, { participants: addedParticipants, activePlayer: updatedActivePlayer })
     // return await db.patch(data.id, { participants: addedParticipants })
@@ -113,14 +113,14 @@ export const updateParticipant = mutation({
  
   
     if (!foundGame) {
-      throw new Error('Game not found');
+      throw new Error('Game not found')
     }
 
-    const { participants } = foundGame;
-    const currentPlayerIndex = participants.findIndex(p => p.address === data.playerAddress);
+    const { participants } = foundGame
+    const currentPlayerIndex = participants.findIndex(p => p.address === data.playerAddress)
 
     if (currentPlayerIndex === -1) {
-      throw new Error('Player not found');
+      throw new Error('Player not found')
     }
 
     const diceRollOutcome = Math.floor(Math.random() * 6) + 1
@@ -130,15 +130,15 @@ export const updateParticipant = mutation({
 
       if (diceRollOutcome === 1) {
         // Set rolloutcome to 0
-        await db.patch(data.id, { rollOutcome: 0 });
+        await db.patch(data.id, { rollOutcome: 0 })
 
         // Update the totalScore of the player and make the next player the active player after 3 seconds
         // setTimeout(async () => {
-        const currentPlayer = participants[currentPlayerIndex];
+        const currentPlayer = participants[currentPlayerIndex]
 
-        const updatedTotalScore = currentPlayer.playerInfo?.totalScore ?? 0;
+        const updatedTotalScore = currentPlayer.playerInfo?.totalScore ?? 0
 
-        const updatedParticipants = [...participants];
+        const updatedParticipants = [...participants]
 
 
         if (currentPlayer.playerInfo) {
@@ -149,39 +149,39 @@ export const updateParticipant = mutation({
               totalScore: updatedTotalScore,
               turnScore: 0
             },
-          };
+          }
   
             // Make the next player the active player
             
             // if (currentPlayerIndex && updatedParticipants) {
-              const nextPlayerIndex = (currentPlayerIndex + 1) % updatedParticipants.length;
-              const nextPlayerAddress = updatedParticipants[nextPlayerIndex].address;
-              await db.patch(data.id, { participants: updatedParticipants, activePlayer: nextPlayerAddress });
+              const nextPlayerIndex = (currentPlayerIndex + 1) % updatedParticipants.length
+              const nextPlayerAddress = updatedParticipants[nextPlayerIndex].address
+              await db.patch(data.id, { participants: updatedParticipants, activePlayer: nextPlayerAddress })
             // }
         }
 
-        // }, 3000);
+        // }, 3000)
       } else {
         // Set rolloutcome to diceRollOutcome
-        await db.patch(data.id, { rollOutcome: diceRollOutcome });
+        await db.patch(data.id, { rollOutcome: diceRollOutcome })
 
         // setTimeout(async () => {
           const updatedParticipants = foundGame?.participants.map((p) => {
             if (p.address === data.playerAddress && p.playerInfo) {
               // Add the rolloutcome to the turnScore of the current player
-              p.playerInfo.turnScore += diceRollOutcome;
+              p.playerInfo.turnScore += diceRollOutcome
             }
-            return p;
-          });
+            return p
+          })
 
           // check if the player has reached the winning score
-          const winningScore = foundGame.gameSettings.winningScore;
+          const winningScore = foundGame.gameSettings.winningScore
 
-          const currentPlayer = participants[currentPlayerIndex];
+          const currentPlayer = participants[currentPlayerIndex]
 
-          const currentPlayerTurnScore = currentPlayer.playerInfo?.turnScore ?? 0;
+          const currentPlayerTurnScore = currentPlayer.playerInfo?.turnScore ?? 0
 
-          const updatedTotalScore = (currentPlayer.playerInfo?.totalScore ?? 0) + currentPlayerTurnScore;
+          const updatedTotalScore = (currentPlayer.playerInfo?.totalScore ?? 0) + currentPlayerTurnScore
 
 
           if (updatedTotalScore >= winningScore) {
@@ -197,22 +197,22 @@ export const updateParticipant = mutation({
                   totalScore: p.address === currentPlayer.address ? updatedTotalScore : p.playerInfo?.totalScore ?? 0
                 }
               }))
-            });
+            })
           } else {
-            await db.patch(data.id, { participants: updatedParticipants });
+            await db.patch(data.id, { participants: updatedParticipants })
           }
 
-        // }, 3000);
+        // }, 3000)
       }
     } else {
       // If data response is false
-      const currentPlayer = participants[currentPlayerIndex];
+      const currentPlayer = participants[currentPlayerIndex]
       if (currentPlayer && currentPlayer.playerInfo) {
-        // const currentPlayer = participants[currentPlayerIndex];
-        const currentPlayerTurnScore = currentPlayer.playerInfo?.turnScore ?? 0;
-        const updatedTotalScore = currentPlayer.playerInfo?.totalScore + currentPlayerTurnScore;
+        // const currentPlayer = participants[currentPlayerIndex]
+        const currentPlayerTurnScore = currentPlayer.playerInfo?.turnScore ?? 0
+        const updatedTotalScore = currentPlayer.playerInfo?.totalScore + currentPlayerTurnScore
 
-              const updatedParticipants = [...participants];
+        const updatedParticipants = [...participants]
         updatedParticipants[currentPlayerIndex] = {
           ...currentPlayer,
           playerInfo: {
@@ -220,14 +220,14 @@ export const updateParticipant = mutation({
             totalScore: updatedTotalScore,
             turnScore: 0
           },
-        };
+        }
   
         // Determine the index of the next player
-        const nextPlayerIndex = (currentPlayerIndex + 1) % participants.length;
+        const nextPlayerIndex = (currentPlayerIndex + 1) % participants.length
   
         // Update the active player
-        const nextPlayerAddress = participants[nextPlayerIndex].address;
-        await db.patch(data.id, { participants: updatedParticipants, activePlayer: nextPlayerAddress });
+        const nextPlayerAddress = participants[nextPlayerIndex].address
+        await db.patch(data.id, { participants: updatedParticipants, activePlayer: nextPlayerAddress })
       }
     }
     return diceRollOutcome

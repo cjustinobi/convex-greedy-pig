@@ -18,6 +18,27 @@ export const createdGames = query({
   },
 })
 
+export const joinedGames = query({
+
+  handler: async ({ auth, db }) => {
+    const identity = await auth.getUserIdentity()
+    if (identity === null) {
+      return console.log('Not authenticated')
+    }
+
+    const user = await getUserByIdentifier(db, identity.tokenIdentifier)
+
+    const games = await db
+      .query('games')
+      .collect()
+
+    if (games.length) {
+      return games.filter((game) => game.participants.some(participant => participant.address === user?.username))
+    }
+    return [] 
+  }
+})
+
 export const store = mutation({
   args: {},
   handler: async ({ db, auth }) => {
@@ -42,6 +63,7 @@ export const store = mutation({
     return await db.insert('users', {
       name: identity.name!,
       email: identity.email!,
+      username: identity.nickname || '',
       tokenIdentifier: identity.tokenIdentifier
     })
   }
