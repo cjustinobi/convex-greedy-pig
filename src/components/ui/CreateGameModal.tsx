@@ -10,7 +10,7 @@ import { SignedIn, SignedOut, SignInButton } from '@clerk/nextjs'
 
 const CreateGameModal = () => {
 
-  const formRef = useRef(null)
+  const formRef = useRef<HTMLFormElement>(null);
   const createGame = useMutation(api.games.create)
   const dispatch = useDispatch()
   const createGameForm = useSelector((state: any) =>
@@ -67,12 +67,6 @@ const CreateGameModal = () => {
       }})
     }
 
-
-  // const reset = () => {
-  //   setGameName('')
-  //   // setStartTime('')
-  //   dispatch({ type: 'modal/toggleGameModal' })
-  // }
   const reset = () => {
     if (formRef.current) {
       formRef.current?.reset()
