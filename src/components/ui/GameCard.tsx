@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 interface GameCardProps {
   game: IGame
   type?: 'user' | 'creator' | 'default'
+  action?: 'join' | 'view'
 }
 
-const GameCard = ({ game, type = 'default' }: GameCardProps) => {
+const GameCard = ({ game, type = 'default', action = 'join' }: GameCardProps) => {
   const router = useRouter();
 
-  const handleNavigate = (id: any, action: string) => {
+  const handleNavigate = (id: any) => {
     router.push(`/games/${id}?action=${action}`);
   };
 
@@ -84,10 +85,10 @@ const GameCard = ({ game, type = 'default' }: GameCardProps) => {
           <p>{capitalize(game.gameSettings.apparatus)}</p>
         </div>
         <button
-          onClick={() => handleNavigate(game._id, "join")}
+          onClick={() => handleNavigate(game._id)}
           className="mt-4 text-xl w-full text-white bg-indigo-600 py-2 rounded-xl shadow-lg"
         >
-          {type === 'default' ? 'Join' : 'View'}
+          {type === 'default' ? 'View' : 'Join'}
         </button>
       </div>
     </div>
