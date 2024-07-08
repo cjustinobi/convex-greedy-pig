@@ -6,13 +6,24 @@ import Socials from '@/components/ui/Socials'
 import Button from './Button'
 import { navLinks } from "@/lib/utils";
 import Drawer from '@/components/ui/Drawer'
-import { SignedIn, SignedOut, SignIn, SignInButton, UserButton } from '@clerk/nextjs'
+import { SignedIn, SignedOut, SignInButton, useAuth, UserButton, useSignIn } from '@clerk/nextjs'
+import { useStoreUser } from '@/hooks/useStoreUser'
+import { useState } from 'react'
+
+interface SetActiveParams {
+  mode: 'modal' | string // Assuming other modes could exist
+}
 
 const Header = () => {
 
+  const { signIn, setActive, isLoaded } = useSignIn()
+  // const { signIn, setActive } = useSignIn();
+  const { userId } = useAuth();
   const dispatch = useDispatch()
+  const { isAuthenticated } = useStoreUser()
+  const [notAuthenticated, setNotAuthenticated] = useState<boolean | undefined>(undefined)
 
-  const modalHandler = () => {
+  const modalHandler = async () => {
     dispatch({ type: 'modal/toggleGameModal' })
   }
 
@@ -49,14 +60,23 @@ const Header = () => {
         <div className="-ml-8 hidden flex-col gap-2.5 sm:flex-row sm:justify-center lg:flex lg:justify-start">
           <div className="flex items-center gap-8">
             {/* <Socials /> */}
-            <Button onClick={modalHandler} className="w-[200px]">
-              Create Game
-            </Button>
+           
+            {isAuthenticated ? (
+              <Button onClick={modalHandler} className="w-[200px]">
+                Create Game
+              </Button>
+            ) : (
+              <SignedOut>
+                <SignInButton forceRedirectUrl={'/games'} mode="modal">
+                  <Button className="w-[200px]">Create Game</Button>
+                </SignInButton>
+              </SignedOut>
+            )}
             <SignedIn>
               <UserButton />
             </SignedIn>
             <SignedOut>
-              <SignInButton>
+              <SignInButton mode="modal">
                 <Button>Sign In</Button>
               </SignInButton>
             </SignedOut>
@@ -66,7 +86,7 @@ const Header = () => {
         <Drawer />
       </header>
     </div>
-  );
+  )
 }
 
 export default Header

@@ -6,7 +6,7 @@ import { selectGameModal } from '@/features/modal/modalSlice'
 import Button from '../shared/Button'
 import toast from 'react-hot-toast'
 import { GameStatus } from '@/interfaces'
-import { SignedIn, SignedOut, SignInButton } from '@clerk/nextjs'
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 
 const CreateGameModal = () => {
 
@@ -244,9 +244,9 @@ const CreateGameModal = () => {
           </div>
         </form>
       </SignedIn>
-      <SignedOut>
+      {/* <SignedOut>
         <SignInButton />
-      </SignedOut>
+      </SignedOut> */}
     </div>
   );
 }
