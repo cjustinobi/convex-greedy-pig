@@ -1,6 +1,6 @@
 import { IGame } from "@/interfaces";
 import { capitalize } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 interface GameCardProps {
   game: IGame
@@ -9,10 +9,12 @@ interface GameCardProps {
 }
 
 const GameCard = ({ game, type = 'default', action = 'join' }: GameCardProps) => {
-  const router = useRouter();
+
+  const router = useRouter()
+  const pathName = usePathname()
 
   const handleNavigate = (id: any) => {
-    router.push(`/games/${id}?action=${action}`);
+    router.push(`/games/${id}?action=${action}`)
   };
 
   return (
@@ -88,7 +90,7 @@ const GameCard = ({ game, type = 'default', action = 'join' }: GameCardProps) =>
           onClick={() => handleNavigate(game._id)}
           className="mt-4 text-xl w-full text-white bg-indigo-600 py-2 rounded-xl shadow-lg"
         >
-          {type === 'default' ? 'View' : 'Join'}
+          {pathName === '/my-games' ? 'View' : 'Join'}
         </button>
       </div>
     </div>

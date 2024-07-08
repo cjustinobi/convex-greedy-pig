@@ -39,17 +39,17 @@ const Apparatus = () => {
   };
 
   const closeJoinModal = () => {
-    setJoinGameForm(false);
+    setJoinGameForm(false)
   };
 
   useEffect(() => {
     if (searchParams) {
-      const action = searchParams.get("action");
-      if (action === "join") {
-        setJoinGameForm(true);
+      const action = searchParams.get('action')
+      if (action === 'join') {
+        setJoinGameForm(true)
       }
     }
-  }, [searchParams]);
+  }, [searchParams])
 
   return (
     <div>
