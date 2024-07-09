@@ -31,9 +31,10 @@ const Dice = () => {
     }
 
     // check if participants are upto minimum of 2 players
-    // if (game?.participants.length < 2) {
-    //   return toast.error("Not enough players to start the game")
-    // }
+    debugger
+    if (game?.participants && game?.participants.length < 2) {
+      return toast.error('Not enough players to start the game')
+    }
 
     const username = localStorage.getItem("username")
     if (game?.activePlayer !== username) {
