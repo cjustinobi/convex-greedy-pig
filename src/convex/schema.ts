@@ -35,6 +35,7 @@ export default defineSchema({
     ),
     // startTime: v.string(),
     rollOutcome: v.number(),
+    rollCount: v.number(),
     winner: v.string()
   })
   .index('by_status', ['status']),

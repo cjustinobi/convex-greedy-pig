@@ -29,6 +29,7 @@ export const vCreateGame = v.object({
     status: v.union(v.literal(GameStatus.New), v.literal(GameStatus.Cancelled), v.literal(GameStatus.Ended), v.literal(GameStatus.InProgress)),
     // startTime: v.string(),
     rollOutcome: v.number(),
+    rollCount: v.number(),
     winner: v.string()
   })
 

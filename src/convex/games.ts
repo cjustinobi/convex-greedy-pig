@@ -20,8 +20,6 @@ export const getGameById = query({
   }
 })
 
-// run cron and delete game that has not been started after an hour
-
 
 export const getGamesByStatus = query({
   args: { gameStatus: v.union(
@@ -130,10 +128,10 @@ export const updateParticipant = mutation({
 
       if (diceRollOutcome === 1) {
         // Set rolloutcome to 0
-        await db.patch(data.id, { rollOutcome: 0 })
+        await db.patch(data.id, { rollOutcome: 0, rollCount: foundGame.rollCount + 1 })
 
         // Update the totalScore of the player and make the next player the active player after 3 seconds
-        // setTimeout(async () => {
+ 
         const currentPlayer = participants[currentPlayerIndex]
 
         const updatedTotalScore = currentPlayer.playerInfo?.totalScore ?? 0
@@ -151,58 +149,58 @@ export const updateParticipant = mutation({
             },
           }
   
-            // Make the next player the active player
+        // Make the next player the active player
             
-            // if (currentPlayerIndex && updatedParticipants) {
-              const nextPlayerIndex = (currentPlayerIndex + 1) % updatedParticipants.length
-              const nextPlayerAddress = updatedParticipants[nextPlayerIndex].address
-              await db.patch(data.id, { participants: updatedParticipants, activePlayer: nextPlayerAddress })
-            // }
+        const nextPlayerIndex = (currentPlayerIndex + 1) % updatedParticipants.length
+        const nextPlayerAddress = updatedParticipants[nextPlayerIndex].address
+        await db.patch(data.id, { participants: updatedParticipants, activePlayer: nextPlayerAddress })
+      
         }
 
-        // }, 3000)
+       
       } else {
         // Set rolloutcome to diceRollOutcome
-        await db.patch(data.id, { rollOutcome: diceRollOutcome })
+        await db.patch(data.id, { 
+          rollOutcome: diceRollOutcome,
+          rollCount: foundGame.rollCount + 1
+        })
 
-        // setTimeout(async () => {
-          const updatedParticipants = foundGame?.participants.map((p) => {
-            if (p.address === data.playerAddress && p.playerInfo) {
-              // Add the rolloutcome to the turnScore of the current player
-              p.playerInfo.turnScore += diceRollOutcome
-            }
-            return p
+        const updatedParticipants = foundGame?.participants.map((p) => {
+          if (p.address === data.playerAddress && p.playerInfo) {
+            // Add the rolloutcome to the turnScore of the current player
+            p.playerInfo.turnScore += diceRollOutcome
+          }
+          return p
+        })
+
+        // check if the player has reached the winning score
+        const winningScore = foundGame.gameSettings.winningScore
+
+        const currentPlayer = participants[currentPlayerIndex]
+
+        const currentPlayerTurnScore = currentPlayer.playerInfo?.turnScore ?? 0
+
+        const updatedTotalScore = (currentPlayer.playerInfo?.totalScore ?? 0) + currentPlayerTurnScore
+
+
+        if (updatedTotalScore >= winningScore) {
+          await db.patch(data.id, {
+            status: GameStatus.Ended,
+            winner: currentPlayer.address,
+            participants: updatedParticipants.map((p) => ({
+              ...p,
+              playerInfo: {
+                ...p.playerInfo,
+                turn: p.playerInfo?.turn ?? 0, // Ensure turn is defined
+                turnScore: 0,
+                totalScore: p.address === currentPlayer.address ? updatedTotalScore : p.playerInfo?.totalScore ?? 0
+              }
+            }))
           })
-
-          // check if the player has reached the winning score
-          const winningScore = foundGame.gameSettings.winningScore
-
-          const currentPlayer = participants[currentPlayerIndex]
-
-          const currentPlayerTurnScore = currentPlayer.playerInfo?.turnScore ?? 0
-
-          const updatedTotalScore = (currentPlayer.playerInfo?.totalScore ?? 0) + currentPlayerTurnScore
-
-
-          if (updatedTotalScore >= winningScore) {
-            await db.patch(data.id, {
-              status: GameStatus.Ended,
-              winner: currentPlayer.address,
-              participants: updatedParticipants.map((p) => ({
-                ...p,
-                playerInfo: {
-                  ...p.playerInfo,
-                  turn: p.playerInfo?.turn ?? 0, // Ensure turn is defined
-                  turnScore: 0,
-                  totalScore: p.address === currentPlayer.address ? updatedTotalScore : p.playerInfo?.totalScore ?? 0
-                }
-              }))
-            })
-          } else {
-            await db.patch(data.id, { participants: updatedParticipants })
+        } else {
+          await db.patch(data.id, { participants: updatedParticipants })
           }
 
-        // }, 3000)
       }
     } else {
       // If data response is false

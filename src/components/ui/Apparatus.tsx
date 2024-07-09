@@ -63,10 +63,10 @@ const Apparatus = () => {
           </div>
 
           <div className="flex justify-center">
-            {!searchParams.get("action") && (
+            {!searchParams.get('action') && (
               <div>
                 <Button
-                  onClick={() => dispatch({ type: "modal/toggleJoinModal" })}
+                  onClick={() => dispatch({ type: 'modal/toggleJoinModal' })}
                   className="mb-10"
                   type="button"
                 >
@@ -75,17 +75,20 @@ const Apparatus = () => {
               </div>
             )}
 
-            {game && game.status === "In Progress" && (
-              <div className="flex justify-between">
-                <Button
-                  className="pass-btn"
-                  style={{ background: "" }}
-                  onClick={handleResponse}
-                >
-                  Pass
-                </Button>
-              </div>
-            )}
+            {game &&
+              game.status === 'In Progress' &&
+              game.activePlayer ===
+                localStorage.getItem('username') && (
+                  <div className="flex justify-between">
+                    <Button
+                      className="pass-btn"
+                      style={{ background: '' }}
+                      onClick={handleResponse}
+                    >
+                      Pass
+                    </Button>
+                  </div>
+                )}
           </div>
           {joinGameForm && <JoinGameModal closeJoinModal={closeJoinModal} />}
         </div>
@@ -93,7 +96,7 @@ const Apparatus = () => {
         <div>No Game found</div>
       )}
     </div>
-  );
+  )
 };
 
 export default Apparatus;

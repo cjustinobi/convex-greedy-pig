@@ -6,7 +6,7 @@ import { selectGameModal } from '@/features/modal/modalSlice'
 import Button from '../shared/Button'
 import toast from 'react-hot-toast'
 import { GameStatus } from '@/interfaces'
-import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { SignedIn } from "@clerk/nextjs";
 
 const CreateGameModal = () => {
 
@@ -17,7 +17,7 @@ const CreateGameModal = () => {
     selectGameModal(state.modal)
   )
 
-  const [creator] = useState<string>('')
+
   const [gameName, setGameName] = useState<string>('')
   const [winningScore, setWinningScore] = useState<number>(20)
   // const [startTime, setStartTime] = useState<string>('')
@@ -63,6 +63,7 @@ const CreateGameModal = () => {
         status: GameStatus.New,
         // startTime,
         rollOutcome: 0,
+        rollCount: 0,
         winner: '',
       }})
     }
