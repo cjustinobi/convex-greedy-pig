@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Logo from '@/assets/img/logo.png'
 import Button from './Button'
 import { useDispatch } from 'react-redux'
-import Drawer from '../ui/Drawer'
+import Drawer from '@/components/ui/Drawer'
 
 const GameHeader = () => {
   const dispatch = useDispatch()
