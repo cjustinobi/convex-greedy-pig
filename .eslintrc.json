@@ -1,0 +1,8 @@
+{
+  "plugins": [
+    "no-warnings"
+  ],
+  "rules": {
+    "no-warnings/warn-to-error": "error"
+  }
+}
