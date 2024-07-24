@@ -1,17 +1,26 @@
-import Link from "next/link";
-import { useDispatch } from "react-redux";
-import { navLinks } from "@/lib/utils";
-import Button from "../shared/Button";
-
-
+import Link from 'next/link'
+import { useDispatch } from 'react-redux'
+import { navLinks } from '@/lib/utils'
+import Button from '../shared/Button'
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton
+} from '@clerk/clerk-react'
+import { useConvexAuth } from 'convex/react'
+import toast from 'react-hot-toast'
 
 const Drawer = () => {
+  const dispatch = useDispatch()
+  const { isAuthenticated } = useConvexAuth()
 
-   const dispatch = useDispatch()
-
-   const modalHandler = () => {
-     dispatch({ type: "modal/toggleGameModal" })
-   }
+  const modalHandler = () => {
+    if (!isAuthenticated) {
+      return toast('Login to create game')
+    }
+    dispatch({ type: 'modal/toggleGameModal' })
+  }
 
   return (
     <div className="drawer lg:hidden justify-end">
@@ -54,10 +63,18 @@ const Drawer = () => {
               Create Game
             </Button>
           </div>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <Button>Sign In</Button>
+            </SignInButton>
+          </SignedOut>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Drawer;
+export default Drawer

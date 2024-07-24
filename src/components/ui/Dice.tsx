@@ -31,7 +31,7 @@ const Dice = () => {
     }
 
     // check if participants are upto minimum of 2 players
-    debugger
+    
     if (game?.participants && game?.participants.length < 2) {
       return toast.error('Not enough players to start the game')
     }

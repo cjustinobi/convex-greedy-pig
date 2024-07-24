@@ -6,9 +6,8 @@ import Socials from '@/components/ui/Socials'
 import Button from './Button'
 import { navLinks } from "@/lib/utils";
 import Drawer from '@/components/ui/Drawer'
-import { SignedIn, SignedOut, SignInButton, useAuth, UserButton, useSignIn } from '@clerk/nextjs'
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 import { useStoreUser } from '@/hooks/useStoreUser'
-import { useState } from 'react'
 
 interface SetActiveParams {
   mode: 'modal' | string // Assuming other modes could exist
@@ -16,12 +15,8 @@ interface SetActiveParams {
 
 const Header = () => {
 
-  const { signIn, setActive, isLoaded } = useSignIn()
-  // const { signIn, setActive } = useSignIn();
-  const { userId } = useAuth();
   const dispatch = useDispatch()
   const { isAuthenticated } = useStoreUser()
-  const [notAuthenticated, setNotAuthenticated] = useState<boolean | undefined>(undefined)
 
   const modalHandler = async () => {
     dispatch({ type: 'modal/toggleGameModal' })

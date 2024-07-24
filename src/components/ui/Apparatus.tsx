@@ -1,46 +1,46 @@
-"use client";
-import { useState, useEffect } from "react";
-import { useParams, useSearchParams } from "next/navigation";
-import { useDispatch } from "react-redux";
-import toast from "react-hot-toast";
-import Button from "@/components/shared/Button";
-import Dice from "@/components/ui/Dice";
-import { useMutation, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import JoinGameModal from "./JoinGameModal";
-import useAudio from "@/hooks/useAudio";
+'use client'
+import { useState, useEffect } from 'react'
+import { useParams, useSearchParams } from 'next/navigation'
+import { useDispatch } from 'react-redux'
+import toast from 'react-hot-toast'
+import Button from '@/components/shared/Button'
+import Dice from '@/components/ui/Dice'
+import { useMutation, useQuery } from 'convex/react'
+import { api } from '@/convex/_generated/api'
+import { Id } from '@/convex/_generated/dataModel'
+import JoinGameModal from './JoinGameModal'
+import useAudio from '@/hooks/useAudio'
 
 const Apparatus = () => {
-  const updateParticipant = useMutation(api.games.updateParticipant);
-  const dispatch = useDispatch();
-  const searchParams = useSearchParams();
-  const { slug } = useParams<{ slug: Id<"games"> }>();
-  const game = useQuery(api.games.getGameById, { id: slug });
-  const passSound = useAudio("/sounds/passSound.mp3");
+  const updateParticipant = useMutation(api.games.updateParticipant)
+  const dispatch = useDispatch()
+  const searchParams = useSearchParams()
+  const { slug } = useParams<{ slug: Id<'games'> }>()
+  const game = useQuery(api.games.getGameById, { id: slug })
+  const passSound = useAudio('/sounds/passSound.mp3')
 
   const [joinGameForm, setJoinGameForm] = useState<boolean>(false)
 
   const handleResponse = async () => {
-    passSound?.play();
-    const username = localStorage.getItem("username");
+    passSound?.play()
+    const username = localStorage.getItem('username')
     if (game?.activePlayer !== username) {
-      return toast.error("Not your turn");
+      return toast.error('Not your turn')
     }
     await updateParticipant({
       data: {
         id: game?._id,
         playerAddress: username,
-        key: "turn",
+        key: 'turn',
         value: 0,
-        response: false,
-      },
-    });
-  };
+        response: false
+      }
+    })
+  }
 
   const closeJoinModal = () => {
     setJoinGameForm(false)
-  };
+  }
 
   useEffect(() => {
     if (searchParams) {
@@ -77,18 +77,17 @@ const Apparatus = () => {
 
             {game &&
               game.status === 'In Progress' &&
-              game.activePlayer ===
-                localStorage.getItem('username') && (
-                  <div className="flex justify-between">
-                    <Button
-                      className="pass-btn"
-                      style={{ background: '' }}
-                      onClick={handleResponse}
-                    >
-                      Pass
-                    </Button>
-                  </div>
-                )}
+              game.activePlayer === localStorage.getItem('username') && (
+                <div className="flex justify-between">
+                  <Button
+                    className="pass-btn"
+                    style={{ background: '' }}
+                    onClick={handleResponse}
+                  >
+                    Pass
+                  </Button>
+                </div>
+              )}
           </div>
           {joinGameForm && <JoinGameModal closeJoinModal={closeJoinModal} />}
         </div>
@@ -97,6 +96,6 @@ const Apparatus = () => {
       )}
     </div>
   )
-};
+}
 
-export default Apparatus;
+export default Apparatus

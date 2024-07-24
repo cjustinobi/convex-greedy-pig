@@ -1,15 +1,16 @@
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useMutation } from 'convex/react'
+import { useConvexAuth, useMutation } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { selectGameModal } from '@/features/modal/modalSlice'
 import Button from '../shared/Button'
 import toast from 'react-hot-toast'
 import { GameStatus } from '@/interfaces'
-import { SignedIn } from "@clerk/nextjs";
+import { SignedIn } from "@clerk/nextjs"
 
 const CreateGameModal = () => {
 
+  const { isAuthenticated } = useConvexAuth()
   const formRef = useRef<HTMLFormElement>(null);
   const createGame = useMutation(api.games.create)
   const dispatch = useDispatch()
@@ -86,12 +87,19 @@ const CreateGameModal = () => {
   }, [])
 
 
+  // useEffect(() => {
+  //   if (!isAuthenticated && createGameForm) {
+  //     toast('Login to create game')
+  //   }
+  // }, [isAuthenticated, createGameForm])
+
+
 
   return (
     <div
       className={`fixed ${
         createGameForm ? "" : "hidden"
-      } inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="my-modal`}
+      } inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="my-modal z-50`}
     >
       <SignedIn>
         <form
