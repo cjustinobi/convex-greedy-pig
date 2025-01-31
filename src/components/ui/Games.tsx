@@ -37,7 +37,7 @@ const Games = () => {
           {games?.length === 0 ? (
             <div className="text-gray-500 text-center">No games available.</div>
           ) : (
-          games?.map((game) =>  <GameCard game={game} action={game.status === 'Ended' ? 'view' : 'join'} />)
+          games?.map((game, i) =>  <GameCard key={i} game={game} action={game.status === 'Ended' ? 'view' : 'join'} />)
           )}
         
         </div>

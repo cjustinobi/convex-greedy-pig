@@ -17,7 +17,7 @@ const MyGames = () => {
       <Header />
       <h1 className="divider">Created Games</h1>
       {createdGames?.length ? (
-        createdGames.map((game) => <GameCard game={game} action="view" />)
+        createdGames.map((game, i) => <GameCard key={i} game={game} action="view" />)
       ) : (
         <div className="md:px-custom p-custom-sm text-gray-500">
           <div className="text-center py-10">
@@ -30,7 +30,7 @@ const MyGames = () => {
       )}
       <h1 className="divider">Joined Games</h1>
       {joinedGames?.length ? (
-        joinedGames.map((game) => <GameCard game={game} action="view" />)
+        joinedGames.map((game, i) => <GameCard key={i} game={game} action="view" />)
       ) : (
         <div className="md:px-custom p-custom-sm text-gray-500">
           <div className="text-center py-10">
