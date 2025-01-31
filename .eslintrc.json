@@ -1,8 +1,6 @@
 {
-  "plugins": [
-    // "no-warnings"
-  ],
-  "rules": {
-    "no-warnings/warn-to-error": "error"
-  }
+  "extends": ["next", "next/core-web-vitals"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "rules": {}
 }
